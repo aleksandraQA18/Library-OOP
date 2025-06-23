@@ -33,7 +33,6 @@ class Library:
             return reader
         except ValidationError as e:
             print(e)
-            return None
 
     def login(self, card_no: str) -> dict | None:
         """
@@ -136,7 +135,7 @@ class Library:
             print("You do not have any borrowed books.")
         else:
             for book in reader_books:
-                book_df = self.catalog.get_book_by_isbn(book)
-                if book_df is not None:
-                    text_msg = f"- title: {book_df['title']}, ISBN: {book_df['isbn']}"
+                book_dict = self.catalog.get_book_by_isbn(book)
+                if book_dict is not None:
+                    text_msg = f"- title: {book_dict['title']}, ISBN: {book_dict['isbn']}"
                     print(style_text(text_msg, Fore.GREEN))
