@@ -13,6 +13,7 @@ class Readers:
     def __init__(self):
         self.csvDataManager = CSVDataManager(READERS)
         self.csvDataManager.df.set_index("card_no", drop=False, inplace=True)
+        self.csvDataManager.df = self.csvDataManager.df.astype({"books": "string"})
         colorama.init(autoreset=True)
 
     def register_reader(self, reader: Reader) -> Reader | None:
