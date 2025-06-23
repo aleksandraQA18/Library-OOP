@@ -11,6 +11,7 @@ class Catalog:
     def __init__(self):
         self.csvDataManager = CSVDataManager(BOOK_STOCK)
         self.csvDataManager.df.set_index("isbn", drop=False, inplace=True)
+        self.csvDataManager.df = self.csvDataManager.df.astype({"reader": "string"})
 
     def get_book_by_isbn(self, isbn_code: str) -> dict | None:
         """
@@ -36,7 +37,7 @@ class Catalog:
             False if the book is not available, or None if the status cannot be determined.
         """
         book_status = book["reader"]
-        if pd.isna(book_status):
+        if pd.isna(book_status) or book_status == "nan":
             return True
         else:
             return False
