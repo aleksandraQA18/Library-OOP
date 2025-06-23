@@ -49,7 +49,7 @@ class Library:
             print(f"Hello, {reader_df['first_name']}! You are logged in.")
             return reader_df
         else:
-            return {}
+            return None
 
     def search_book_by_title(self, title: str) -> None:
         """
@@ -138,5 +138,5 @@ class Library:
             for book in reader_books:
                 book_df = self.catalog.get_book_by_isbn(book)
                 if book_df is not None:
-                    text_msg = f"✔ title: {book_df['title']}, ISBN: {book_df['isbn']}"
+                    text_msg = f"- title: {book_df['title']}, ISBN: {book_df['isbn']}"
                     print(style_text(text_msg, Fore.GREEN))
