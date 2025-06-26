@@ -89,16 +89,12 @@ class Readers:
             an empty list if the reader has no books, or None if an error occurs.
         """
         try:
-            reader_df = self.get_reader_by_card_no(card_no)
-            if reader_df is None:
-                raise ValueError("Reader does not exists")
-            else:
-                books = reader_df["books"]
-                if pd.isna(books):
-                    return []
-                return books.split(",")
-        except Exception as e:
-            print("An error occured: ", e)
+            reader_books = self.csvDataManager.get_data_from_column(card_no, "books")
+            if pd.isna(reader_books):
+                return []
+            return str(reader_books).split(",")
+        except KeyError:
+            print(f"Reader with card number {card_no} does not exists")
 
     def assign_book(self, isbn_code, card_no: str) -> str | None:
         """
@@ -112,12 +108,12 @@ class Readers:
         """
         reader_books = self.get_reader_books(card_no)
         if reader_books is None:
-            self.csvDataManager.update_csv(card_no, "books", isbn_code)
+            self.csvDataManager.update_df(card_no, "books", isbn_code)
             return reader_books
         else:
             reader_books.append(isbn_code)
             reader_books = ",".join(reader_books)
-            self.csvDataManager.update_csv(card_no, "books", reader_books)
+            self.csvDataManager.update_df(card_no, "books", reader_books)
             return reader_books
 
     def unassign_book(self, isbn_code, card_no: str) -> list | None:
@@ -136,7 +132,7 @@ class Readers:
         elif isbn_code in reader_books:
             return_book = reader_books.index(isbn_code)
             reader_books.pop(return_book)
-            self.csvDataManager.update_csv(card_no, "books", ",".join(reader_books))
+            self.csvDataManager.update_df(card_no, "books", ",".join(reader_books))
             return reader_books
         else:
             return None
