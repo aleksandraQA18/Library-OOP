@@ -27,19 +27,6 @@ The system uses classes for library management, readers, and catalog, and suppor
 - [colorama](https://pypi.org/project/colorama/) (for colored terminal output)
 - pandas
 
-## Project Structure
-
-```
-bookshop-oop/
-│
-├── library.py      # Main library management logic
-├── catalog.py      # Book catalog management
-├── reader.py       # Reader class and validation
-├── readers.py      # Readers collection management
-├── utils.py        # Utility functions (e.g., text styling)
-└── ...
-```
-
 ## Getting Started
 
 1. **Clone the repository**
