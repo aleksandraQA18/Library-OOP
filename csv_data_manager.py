@@ -10,6 +10,11 @@ class CSVDataManager:
     def print_df_results(self, df: pd.DataFrame, columns: list) -> None:
         """
         Prints the specified columns of a pandas DataFrame in a formatted table.
+        Args:
+            df (pd.DataFrame): The DataFrame to display.
+            columns (list): List of column names to include in the output.
+        Returns:
+            None
         """
         try:
             df_dict = df[columns].to_dict("records")
@@ -17,28 +22,73 @@ class CSVDataManager:
         except KeyError as e:
             print("KeyError:", e)
 
-    def get_row_by_index(self, index: str) -> dict | None:
+    def get_rows_by_index(self, index: list) -> pd.DataFrame | None:
         """
-        Retrieve a row from the DataFrame by its index and return as a list of dictionaries.
+        Retrieve rows from the DataFrame based on the provided list of indices.
+        Args:
+            index (list): A list of indices specifying which rows to retrieve from the DataFrame.
+        Returns:
+            pd.DataFrame | None: A DataFrame containing the selected rows if the indices are valid, otherwise None.
         """
-        row_df = self.df.loc[[index]]
-        return row_df.to_dict("records")[0]
+
+        row_df = self.df.loc[index]
+        return row_df
+
+    def get_data_from_column(self, index: str, column_name: str):
+        """
+        Retrieve data from a specific column and row in the DataFrame.
+        Args:
+            index (str): The index (row label) from which to retrieve the data.
+            column_name (str): The name of the column from which to retrieve the data.
+        Returns:
+            Any: The value located at the specified row and column in the DataFrame.
+        """
+
+        return self.df.loc[index, column_name]
 
     def save_to_csv(self) -> None:
+        """
+        Saves the current DataFrame to a CSV file at the specified filepath.
+        """
+
         self.df.to_csv(self.filepath, index=False)
 
     def match_data(self, column_name: str, data: str) -> pd.DataFrame | None:
-        """Search for rows where the given column contains the data (case-insensitive)."""
+        """
+        Searches for rows in the DataFrame where the specified column contains the given substring (case-insensitive).
+        Args:
+            column_name (str): The name of the column to search within.
+            data (str): The substring to search for in the specified column.
+        Returns:
+            pd.DataFrame | None: A DataFrame containing the matching rows, or None if no matches are found.
+        """
+
         results_df = self.df[self.df[column_name].str.contains(data, case=False)]
         return results_df
 
     def search_exact_data(self, column_name: str, data: str) -> pd.DataFrame | None:
-        """Search for rows where the given column are equal to the data (case-sensitive)."""
+        """
+        Searches for rows in the DataFrame where the specified column matches the given data exactly.
+        Args:
+            column_name (str): The name of the column to search in.
+            data (str): The exact value to match in the specified column.
+        Returns:
+            pd.DataFrame | None: A DataFrame containing all rows where the column matches the data exactly.
+        """
+
         results_df = self.df[self.df[column_name] == data]
         return results_df
 
-    def update_csv(self, index, column_name: str, new_data: str) -> None:
-        """Update CSV file with new data."""
+    def update_df(self, index, column_name: str, new_data: str) -> None:
+        """
+        Updates a specific cell in the DataFrame at the given index and column with new data,
+        then saves the updated DataFrame to the CSV file.
+        Args:
+            index: The index (row label) of the DataFrame to update.
+            column_name (str): The name of the column to update.
+            new_data (str): The new value to set in the specified cell.
+        """
+
         try:
             self.df.at[index, column_name] = new_data
             self.save_to_csv()
