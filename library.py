@@ -1,5 +1,4 @@
 import colorama
-from colorama import Fore
 
 from catalog import Catalog
 from reader import Reader, ValidationError
@@ -100,7 +99,8 @@ class Library:
         book = self.catalog.borrow_book(isbn_code, card_no)
         if book is not None:
             self.readers.assign_book(isbn_code, card_no)
-            print(f"The book '{book['title']}' is successfully borrowed.")
+            title = book["title"].squeeze()
+            print(f"The book '{title}' is successfully borrowed.")
 
     def return_book(self, isbn_code: str, card_no: str) -> None:
         """
@@ -121,21 +121,32 @@ class Library:
         else:
             print(f"The book was not found. Check the ISBN code.")
 
-    def print_reader_books(self, card_no: str) -> None:
+    def has_reader_books(self, card_no: str) -> bool:
+        """
+        Checks if a reader, identified by their card number, currently has any books borrowed.
+        Args:
+            card_no (str): The card number of the reader.
+        Returns:
+            bool: True if the reader has at least one book borrowed, False otherwise.
+        """
+
+        reader_books = self.readers.get_reader_books(card_no)
+        if reader_books is not None and len(reader_books) > 0:
+            return True
+        return False
+
+    def print_reader_books(self, card_no: str) -> None | int:
         """
         Prints the list of books currently borrowed by a reader identified by their card number.
         Args:
             card_no (str): The unique card number of the reader.
         Returns:
-            None
+            bool
         """
-
         reader_books = self.readers.get_reader_books(card_no)
-        if reader_books is None or len(reader_books) == 0:
-            print("You do not have any borrowed books.")
+        if reader_books is not None and len(reader_books) > 0:
+            books_df = self.catalog.get_book_by_isbn(reader_books)
+            if books_df is not None:
+                self.catalog.print_book_results(books_df, ["title", "isbn"])
         else:
-            for book in reader_books:
-                book_dict = self.catalog.get_book_by_isbn(book)
-                if book_dict is not None:
-                    text_msg = f"- title: {book_dict['title']}, ISBN: {book_dict['isbn']}"
-                    print(style_text(text_msg, Fore.GREEN))
+            print("You do not have any books on your account.")
