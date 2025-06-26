@@ -66,11 +66,15 @@ def library_functions():
                     if reader is None:
                         print("Only logged user can return a book.")
                     else:
-                        card_num = reader["card_no"]
-                        print("Your books:")
-                        library.print_reader_books(card_no)
-                        isbn = input("To return a book, please enter an ISBN code: ")
-                        library.return_book(isbn, card_num)
+                        has_books = library.has_reader_books(reader["card_no"])
+                        if has_books:
+                            library.print_reader_books(reader["card_no"])
+                            isbn = input(
+                                "To return a book, please enter an ISBN code: "
+                            )
+                            library.return_book(isbn, reader["card_no"])
+                        else:
+                            print("You do not have any books on your account.")
                 case 7:
                     if reader is None:
                         print("Please log in to print your books.")
@@ -85,7 +89,7 @@ def library_functions():
                 case _:
                     print("Enter a number from the menu")
         except ValueError as e:
-            print("❗ Please enter a valid action number!")
+            print("Please enter a valid action number!")
 
 
 menu(actions)
