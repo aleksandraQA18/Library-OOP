@@ -13,7 +13,7 @@ class Catalog:
         self.csvDataManager.df.set_index("isbn", drop=False, inplace=True)
         self.csvDataManager.df = self.csvDataManager.df.astype({"reader": "string"})
 
-    def get_book_by_isbn(self, isbn_code: str) -> dict | None:
+    def get_book_by_isbn(self, isbn_code: list) -> pd.DataFrame | None:
         """
         Retrieve a book's details from the catalog using its ISBN code.
         Args:
@@ -22,25 +22,28 @@ class Catalog:
             dict | None: A dictionary containing the book's details if found, otherwise None.
         """
         try:
-            book = self.csvDataManager.get_row_by_index(isbn_code)
+            book = self.csvDataManager.get_rows_by_index(isbn_code)
             return book
         except KeyError:
             print(f"The book with the ISBN {isbn_code} was not found.")
 
-    def get_book_status(self, book: dict) -> bool | None:
+    def get_book_status(self, book: pd.DataFrame) -> bool | None:
         """
-        Determines the availability status of a book.
+        Determines the availability status of a book based on the 'reader' column.
         Args:
-            book (dict): A dictionary representing a book, expected to contain a "reader" key.
+            book (pd.DataFrame): A DataFrame representing book records, expected to contain a 'reader' column.
         Returns:
-            bool | None: Returns True if the book is available (i.e., "reader" is NaN),
-            False if the book is not available, or None if the status cannot be determined.
+            bool | None: 
+                - True if there are books available (i.e., at least one row where 'reader' is null).
+                - False if no books are available (i.e., all rows have a non-null 'reader').
+                - None if the input DataFrame is empty or does not contain the expected structure.
         """
-        book_status = book["reader"]
-        if pd.isna(book_status) or book_status == "nan":
-            return True
-        else:
+        
+        books_assigned = book[book["reader"].isnull()]
+        if books_assigned.empty:
             return False
+        else:
+            return True
 
     def display_book_status(self, df: pd.DataFrame) -> pd.DataFrame | None:
         """
@@ -107,7 +110,7 @@ class Catalog:
         """
         self.csvDataManager.print_df_results(df, columns)
 
-    def borrow_book(self, isbn_code: str, card_no: str) -> dict | None:
+    def borrow_book(self, isbn_code: str, card_no: str) -> pd.DataFrame | None:
         """
         Attempts to borrow a book from the catalog using its ISBN code and the reader's card number.
         Args:
@@ -117,14 +120,14 @@ class Catalog:
             dict | None: The book's information as a dictionary if the book is available and successfully borrowed;
                          None if the book is not available or does not exist.
         """
-        book = self.get_book_by_isbn(isbn_code)
+        book = self.get_book_by_isbn([isbn_code])
         if book is not None:
-            is_unassigned = self.get_book_status(book)
-            if is_unassigned:
-                self.csvDataManager.update_csv(isbn_code, "reader", card_no)
+            is_available = self.get_book_status(book)
+            if is_available:
+                self.csvDataManager.update_df(isbn_code, "reader", card_no)
                 return book
             else:
-                print(f"The book with the ISBN {isbn_code} is not available.")
+                print(f"The book with the ISBN {isbn_code[0]} is not available.")
                 return None
 
     def return_book(self, isbn_code: str) -> dict | None:
@@ -135,4 +138,4 @@ class Catalog:
         Returns:
             dict | None: The book's information as a dictionary if the book exists, otherwise None.
         """
-        self.csvDataManager.update_csv(isbn_code, "reader", "")
+        self.csvDataManager.update_df(isbn_code, "reader", "")
