@@ -1,0 +1,43 @@
+Library Test Cases:
+
+1. The application starts correctly.
+2. The menu displays correctly.
+3. Correct navigation to each selected action (test for every action).
+4. Invalid action data type (enter random text).
+5. Action number outside the range indicated in the menu.
+6. Successful registration of a new user.
+7. Registration with an invalid first name: less than 3 characters.
+8. Registration with an invalid first name: empty string.
+9. Registration with an invalid last name: less than 3 characters.
+10. Registration with an invalid last name: empty string.
+11. Registration with an invalid username: less than 3 characters.
+12. Registration with an invalid username: empty string.
+13. Registration with an invalid email: less than 3 characters.
+14. Registration with invalid email: missing '@' character.
+15. Registration with invalid email: empty string.
+16. After successful registration, the user can log in.
+17. Registered users can log in.
+18. Login with an incorrect card number.
+19. An unauthenticated user can search for a book by title.
+20. An authenticated user can search for a book by title.
+21. An unauthenticated user can search for a book by author.
+22. An authenticated user can search for a book by author.
+23. Search for a book by a full title that exists in the CSV file.
+24. Search for a book by a partial title that exists in the CSV file.
+25. Search for a book by a title that does not exist in the CSV file.
+26. Search for a book by a full author name that exists in the CSV file.
+27. Search for a book by a partial author name that exists in the CSV file.
+28. Search for a book by an author that does not exist in the CSV file.
+29. An unauthenticated user cannot borrow a book.
+30. An authenticated user can borrow a book.
+31. An authenticated user cannot borrow a book by entering an incorrect ISBN code.
+32. An authenticated user cannot borrow a book by entering the code of a book that is already borrowed.
+33. An unauthenticated user cannot return a book.
+34. An authenticated user can return a borrowed book.
+35. An authenticated user cannot return a book by entering an incorrect ISBN code.
+36. An authenticated user cannot return a book if they have no borrowed books.
+37. An unauthenticated user cannot view the list of borrowed books.
+38. An authenticated user can view the list of borrowed books.
+39. An authenticated user can display the menu.
+40. An unauthenticated user can display the menu.
+41. The user exits the application correctly.
